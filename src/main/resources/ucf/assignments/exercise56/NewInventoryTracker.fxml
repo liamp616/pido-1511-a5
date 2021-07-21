@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+                  <MenuItem mnemonicParsing="false" text="New" />
+              <MenuItem mnemonicParsing="false" text="Quit" />
+                  <MenuItem mnemonicParsing="false" text="Save As..." />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Load..." />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Find">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Search..." />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <center>
+      <TableView fx:id="itemsTableView" BorderPane.alignment="CENTER">
+        <columns>
+          <TableColumn fx:id="itemsSerialNumberColumn" prefWidth="75.0" text="Serial Number" />
+          <TableColumn fx:id="itemsNameColumn" prefWidth="75.0" text="Name" />
+            <TableColumn fx:id="itemsValueColumn" prefWidth="75.0" text="Value" />
+        </columns>
+      </TableView>
+   </center>
+   <bottom>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <HBox spacing="4.0">
+               <children>
+                  <TextField fx:id="itemSerialNumberTextField" promptText="Serial Number" />
+                  <TextField fx:id="itemNameTextField" promptText="Item Name" />
+                  <TextField fx:id="itemPriceTextField" promptText="Item Price" />
+                  <Button fx:id="addNewItemButtonClicked" mnemonicParsing="false" text="Add New Item" />
+               </children>
+            </HBox>
+            <HBox>
+               <children>
+                  <Button mnemonicParsing="false" text="Delete Selected Item" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </bottom>
+</BorderPane>
