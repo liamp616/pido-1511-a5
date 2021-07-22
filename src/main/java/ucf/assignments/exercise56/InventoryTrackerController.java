@@ -2,15 +2,22 @@ package ucf.assignments.exercise56;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-public class InventoryTrackerController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class InventoryTrackerController implements Initializable {
     //  make @FXML variables
     @FXML
     TextField itemSerialNumberTextField;
@@ -31,6 +38,9 @@ public class InventoryTrackerController {
     Button editItemButton;
 
     @FXML
+    TextField filterField;
+
+    @FXML
     TableColumn<Item, String> itemSerialNumberColumn;
 
     @FXML
@@ -42,8 +52,56 @@ public class InventoryTrackerController {
     @FXML
     TableView<Item> itemsTableView;
 
-    //  create observable list
+    //  create observable lists
     ObservableList<Item> list = FXCollections.observableArrayList();
+
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        itemSerialNumberColumn.setCellValueFactory(new PropertyValueFactory<Item, String>("serialNumber"));
+        itemNameColumn.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
+        itemValueColumn.setCellValueFactory(new PropertyValueFactory<Item, Double>("value"));
+
+        /*
+        Item item1 = new Item("12345", "PS2", 500);
+        Item item2 = new Item("X6246", "Xbox", 400);
+        Item item3 = new Item("5505", "test", 5);
+
+        list.addAll(item1, item2, item3);
+         */
+
+
+        FilteredList<Item> filteredData = new FilteredList<>(list, b -> true);
+            filterField.textProperty().addListener((observable, oldValue, newValue) -> {
+                filteredData.setPredicate(item -> {
+                    //  if filter text is empty, display all items
+                    if(newValue == null || newValue.isEmpty()) {
+                        return true;
+                    }
+
+                    //  compare serial number and name of every item with filter text
+                    String lowerCaseFilter = newValue.toLowerCase();
+
+                    if(item.getSerialNumber().toLowerCase().indexOf(lowerCaseFilter) != -1) {
+                        return true;    //  filter matches with serial number
+                    } else if(item.getName().toLowerCase().indexOf(lowerCaseFilter) != -1) {
+                        return true;    //  filter matches with name
+                    } else {
+                        return false;   //  does not match
+                    }
+                });
+            });
+
+            //  wrap the filteredlist in a sortedlist
+            SortedList<Item> sortedData = new SortedList<>(filteredData);
+
+            //  bind the sortedlist comparator to the tableview comparator
+            sortedData.comparatorProperty().bind(itemsTableView.comparatorProperty());
+
+            //  add sorted and filtered data to the table
+            itemsTableView.setItems(sortedData);
+
+    }
+
 
     //  refreshes the serial number, name, and price text fields
     public void refresh() {
@@ -71,23 +129,27 @@ public class InventoryTrackerController {
     public void addItem(Event e) {
         //  make a new item and add it to the observable list
         list.add(new Item(itemSerialNumberTextField.getText(), itemNameTextField.getText(), Double.parseDouble(itemPriceTextField.getText())));
-        //  add the observable list to the table view
-        itemSerialNumberColumn.setCellValueFactory(new PropertyValueFactory<Item, String>("serialNumber"));
-        itemNameColumn.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
-        itemValueColumn.setCellValueFactory(new PropertyValueFactory<Item, Double>("value"));
-        //  add the observable list to the table view
-        itemsTableView.setItems(list);
         refresh();
     }
+
 
     @FXML
     public void removeItem(Event e) {
         //  find the index of the selected item
         int index = itemsTableView.getSelectionModel().getSelectedIndex();
-        //  remove the index of the list
-        itemsTableView.getItems().remove(index);
+        //  take the name of the selected index
+        String selectedName = itemsTableView.getItems().get(index).getName();
+
+        //  iterate through the list of items, and if the string matches, delete the item in the list
+        for(int i = 0; i < list.size(); i++) {
+            if(selectedName.equals(list.get(i).getName())) {
+                list.remove(i);
+            }
+        }
+
         refresh();
     }
+
 
     @FXML
     public void editItem(Event e) {
@@ -101,4 +163,7 @@ public class InventoryTrackerController {
         itemsTableView.getItems().get(index).setValue(Double.parseDouble(itemPriceTextField.getText()));
         refresh();
     }
+
+
+
 }

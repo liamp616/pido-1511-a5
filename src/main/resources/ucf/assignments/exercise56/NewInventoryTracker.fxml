@@ -41,9 +41,9 @@
    <center>
       <TableView fx:id="itemsTableView" onMouseClicked="#tableViewSelectedItem" BorderPane.alignment="CENTER">
         <columns>
-          <TableColumn fx:id="itemSerialNumberColumn" prefWidth="218.0" text="Serial Number" />
-          <TableColumn fx:id="itemNameColumn" prefWidth="220.0" text="Name" />
-            <TableColumn fx:id="itemValueColumn" minWidth="0.0" prefWidth="161.0" text="Value ($)" />
+          <TableColumn fx:id="itemSerialNumberColumn" maxWidth="1.7976931348623157E308" prefWidth="192.0" text="Serial Number" />
+          <TableColumn fx:id="itemNameColumn" prefWidth="218.0" text="Name" />
+            <TableColumn fx:id="itemValueColumn" minWidth="0.0" prefWidth="189.0" text="Value ($)" />
         </columns>
       </TableView>
    </center>
@@ -62,6 +62,11 @@
                   <Button fx:id="addItemButton" mnemonicParsing="false" onAction="#addItem" text="Add New Item" />
                   <Button fx:id="deleteItemButton" mnemonicParsing="false" onAction="#removeItem" text="Delete Selected Item" />
                   <Button fx:id="editItemButton" mnemonicParsing="false" onAction="#editItem" text="Edit Selected Item" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER">
+               <children>
+                  <TextField fx:id="filterField" alignment="TOP_LEFT" prefHeight="25.0" prefWidth="364.0" promptText="Search" />
                </children>
             </HBox>
          </children>
