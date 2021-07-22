@@ -127,17 +127,14 @@ public class InventoryTrackerController implements Initializable {
 
     @FXML
     public void addItem(Event e) {
-        Boolean found = false;
-        //  check if serial number and name entered already exists
+        Boolean similarFound = false;
         for(int i = 0; i < list.size(); i++) {
-            if(itemSerialNumberTextField.getText().equals(list.get(i).getSerialNumber())) {
-                found = true;
-            } else {
-                found = false;
+            if((itemSerialNumberTextField.getText().compareTo(list.get(i).getSerialNumber())) == 0) {
+                similarFound = true;
             }
         }
         //  if there is no item with serial number in list
-        if(!found) {
+        if(similarFound.equals(false)) {
             //  make a new item and add it to the observable list
             list.add(new Item(itemSerialNumberTextField.getText(), itemNameTextField.getText(), Double.parseDouble(itemPriceTextField.getText())));
             refresh();
@@ -171,15 +168,32 @@ public class InventoryTrackerController implements Initializable {
 
     @FXML
     public void editItem(Event e) {
-        //  find the index of the selected item
-        int index = itemsTableView.getSelectionModel().getSelectedIndex();
-        //  set the new serial number
-        itemsTableView.getItems().get(index).setSerialNumber(itemSerialNumberTextField.getText());
-        //  set the new name
-        itemsTableView.getItems().get(index).setName(itemNameTextField.getText());
-        //  set the new value
-        itemsTableView.getItems().get(index).setValue(Double.parseDouble(itemPriceTextField.getText()));
-        refresh();
+        Boolean similarFound = false;
+        for(int i = 0; i < list.size(); i++) {
+            if((itemSerialNumberTextField.getText().compareTo(list.get(i).getSerialNumber())) == 0) {
+                similarFound = true;
+            }
+        }
+        //  if there is no item with serial number in list
+        if(similarFound.equals(false)) {
+            //  make a new item and add it to the observable list
+            //  find the index of the selected item
+            int index = itemsTableView.getSelectionModel().getSelectedIndex();
+            //  set the new serial number
+            itemsTableView.getItems().get(index).setSerialNumber(itemSerialNumberTextField.getText());
+            //  set the new name
+            itemsTableView.getItems().get(index).setName(itemNameTextField.getText());
+            //  set the new value
+            itemsTableView.getItems().get(index).setValue(Double.parseDouble(itemPriceTextField.getText()));
+            refresh();
+        } else {    //  if there is an item with serial number in the list
+            Alert a1 = new Alert(Alert.AlertType.WARNING);
+            a1.setTitle("Warning");
+            a1.setContentText("Item with inputted serial number already exists.");
+            a1.setHeaderText(null);
+            a1.showAndWait();
+        }
+
     }
 
 
