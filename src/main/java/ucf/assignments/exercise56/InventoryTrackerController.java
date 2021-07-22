@@ -13,6 +13,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.Alert;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -99,7 +100,6 @@ public class InventoryTrackerController implements Initializable {
 
             //  add sorted and filtered data to the table
             itemsTableView.setItems(sortedData);
-
     }
 
 
@@ -127,9 +127,28 @@ public class InventoryTrackerController implements Initializable {
 
     @FXML
     public void addItem(Event e) {
-        //  make a new item and add it to the observable list
-        list.add(new Item(itemSerialNumberTextField.getText(), itemNameTextField.getText(), Double.parseDouble(itemPriceTextField.getText())));
-        refresh();
+        Boolean found = false;
+        //  check if serial number and name entered already exists
+        for(int i = 0; i < list.size(); i++) {
+            if(itemSerialNumberTextField.getText().equals(list.get(i).getSerialNumber())) {
+                found = true;
+            } else {
+                found = false;
+            }
+        }
+        //  if there is no item with serial number in list
+        if(!found) {
+            //  make a new item and add it to the observable list
+            list.add(new Item(itemSerialNumberTextField.getText(), itemNameTextField.getText(), Double.parseDouble(itemPriceTextField.getText())));
+            refresh();
+        } else {    //  if there is an item with serial number in the list
+            Alert a1 = new Alert(Alert.AlertType.WARNING);
+            a1.setTitle("Warning");
+            a1.setContentText("Item with inputted serial number already exists.");
+            a1.setHeaderText(null);
+            a1.showAndWait();
+        }
+
     }
 
 
@@ -146,7 +165,6 @@ public class InventoryTrackerController implements Initializable {
                 list.remove(i);
             }
         }
-
         refresh();
     }
 
