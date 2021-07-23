@@ -18,21 +18,13 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-                  <MenuItem mnemonicParsing="false" text="New" />
-              <MenuItem mnemonicParsing="false" text="Quit" />
-                  <MenuItem mnemonicParsing="false" text="Save As..." />
+                  <MenuItem fx:id="saveTSV" mnemonicParsing="false" onAction="#exportTSV" text="Save as TSV" />
+                  <MenuItem fx:id="saveHTML" mnemonicParsing="false" onAction="#exportHTML" text="Save as HTML" />
+                  <MenuItem fx:id="saveJSON" mnemonicParsing="false" onAction="#exportJSON" text="Save as JSON" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Load..." />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Find">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Search..." />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+                  <MenuItem fx:id="loadTSV" mnemonicParsing="false" onAction="#importTSV" text="Load TSV" />
+                  <MenuItem fx:id="loadHTML" mnemonicParsing="false" onAction="#importHTML" text="Load HTML" />
+                  <MenuItem fx:id="loadJSON" mnemonicParsing="false" onAction="#importJSON" text="Load JSON" />
             </items>
           </Menu>
         </menus>

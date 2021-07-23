@@ -8,18 +8,40 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.Alert;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import java.io.*;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 public class InventoryTrackerController implements Initializable {
+
+    FileChooser fileChooser = new FileChooser();
+
     //  make @FXML variables
+    @FXML
+    MenuItem saveTSV;
+
+    @FXML
+    MenuItem saveHTML;
+
+    @FXML
+    MenuItem saveJSON;
+
+    @FXML
+    MenuItem loadTSV;
+
+    @FXML
+    MenuItem loadHTML;
+
+    @FXML
+    MenuItem loadJSON;
+
     @FXML
     TextField itemSerialNumberTextField;
 
@@ -62,13 +84,12 @@ public class InventoryTrackerController implements Initializable {
         itemNameColumn.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
         itemValueColumn.setCellValueFactory(new PropertyValueFactory<Item, Double>("value"));
 
-        /*
+
         Item item1 = new Item("12345", "PS2", 500);
         Item item2 = new Item("X6246", "Xbox", 400);
         Item item3 = new Item("5505", "test", 5);
 
         list.addAll(item1, item2, item3);
-         */
 
 
         FilteredList<Item> filteredData = new FilteredList<>(list, b -> true);
@@ -128,8 +149,10 @@ public class InventoryTrackerController implements Initializable {
     @FXML
     public void addItem(Event e) {
         Boolean similarFound = false;
+        //  checks if there is an item with the serial number from the textfield exists
         for(int i = 0; i < list.size(); i++) {
             if((itemSerialNumberTextField.getText().compareTo(list.get(i).getSerialNumber())) == 0) {
+                //  if it exists, the boolean is set to true
                 similarFound = true;
             }
         }
@@ -145,9 +168,7 @@ public class InventoryTrackerController implements Initializable {
             a1.setHeaderText(null);
             a1.showAndWait();
         }
-
     }
-
 
     @FXML
     public void removeItem(Event e) {
@@ -165,20 +186,26 @@ public class InventoryTrackerController implements Initializable {
         refresh();
     }
 
-
     @FXML
     public void editItem(Event e) {
+        //  find the index of the selected item
+        int index = itemsTableView.getSelectionModel().getSelectedIndex();
+
         Boolean similarFound = false;
+        //  checks if there is an item with the serial number from the textfield exists
         for(int i = 0; i < list.size(); i++) {
             if((itemSerialNumberTextField.getText().compareTo(list.get(i).getSerialNumber())) == 0) {
+                //  if it exists, the boolean is set to true
                 similarFound = true;
+            }
+            if(itemSerialNumberTextField.getText().compareTo(list.get(index).getSerialNumber()) == 0) {
+                similarFound = false;
             }
         }
         //  if there is no item with serial number in list
         if(similarFound.equals(false)) {
             //  make a new item and add it to the observable list
-            //  find the index of the selected item
-            int index = itemsTableView.getSelectionModel().getSelectedIndex();
+
             //  set the new serial number
             itemsTableView.getItems().get(index).setSerialNumber(itemSerialNumberTextField.getText());
             //  set the new name
@@ -193,9 +220,83 @@ public class InventoryTrackerController implements Initializable {
             a1.setHeaderText(null);
             a1.showAndWait();
         }
+    }
+
+    @FXML
+    public void exportHTML(ActionEvent event) {
 
     }
 
+    @FXML
+    public void exportJSON(ActionEvent event) {
 
+    }
 
+    @FXML
+    public void importHTML(ActionEvent event) {
+
+    }
+
+    @FXML
+    public void importJSON(ActionEvent event) {
+
+    }
+
+    @FXML
+    public void exportTSV(ActionEvent event) {
+        //  open up an open window and can select the file
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("TSV (Tab delimited)", "*.tsv"));
+        File file = fileChooser.showSaveDialog(new Stage());
+
+        //  if the file is not empty, write the list's data into tsv format
+        if(file != null) {
+            try {
+                PrintWriter pw = new PrintWriter(file);
+                StringBuilder sb = new StringBuilder();
+
+                //  separate the serial number, name, and price with tabs for each line
+                for(int i = 0; i < list.size(); i++) {
+
+                    sb.append(list.get(i).getSerialNumber());
+                    sb.append("\t");
+                    sb.append(list.get(i).getName());
+                    sb.append("\t");
+                    sb.append(list.get(i).getValue());
+                    sb.append("\n");
+                }
+                pw.write(sb.toString());
+                pw.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @FXML
+    public void importTSV(ActionEvent event) {
+        String line = "";
+
+        //  open up an open window and select the file
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("TSV (Tab delimited)", "*.tsv"));
+        File file = fileChooser.showOpenDialog(new Stage());
+        itemsTableView.getItems().clear();
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+
+            //  reads in tsv file
+            while((line = br.readLine()) != null) {
+                String[] temp = line.split("\t");
+                Double value = Double.parseDouble(temp[2]);
+                list.add(new Item(temp[0], temp[1], value));
+                itemsTableView.setItems(list);
+                refresh();
+            }
+
+        } catch (FileNotFoundException fileNotFoundException) {
+            fileNotFoundException.printStackTrace();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+    }
 }
