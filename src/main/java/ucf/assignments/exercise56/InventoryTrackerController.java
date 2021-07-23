@@ -1,5 +1,6 @@
 package ucf.assignments.exercise56;
 
+import com.google.gson.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -84,13 +85,15 @@ public class InventoryTrackerController implements Initializable {
         itemNameColumn.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
         itemValueColumn.setCellValueFactory(new PropertyValueFactory<Item, Double>("value"));
 
-
+        /*
         Item item1 = new Item("12345", "PS2", 500);
         Item item2 = new Item("X6246", "Xbox", 400);
         Item item3 = new Item("5505", "test", 5);
 
         list.addAll(item1, item2, item3);
 
+
+         */
 
         FilteredList<Item> filteredData = new FilteredList<>(list, b -> true);
             filterField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -229,6 +232,39 @@ public class InventoryTrackerController implements Initializable {
 
     @FXML
     public void exportJSON(ActionEvent event) {
+        //  open up an open window and can select the file
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON (JavaScript Object Notation", "*.json"));
+        File file = fileChooser.showSaveDialog(new Stage());
+
+        //  if the file is not empty, write the list's data into json format
+        if(file != null) {
+            try {
+                PrintWriter pw = new PrintWriter(file);
+                StringBuilder sb = new StringBuilder();
+
+                sb.append("{\n\t");
+                sb.append("\"items\": [\n\t");
+                //  separate the serial number, name, and price with tabs for each line
+                for(int i = 0; i < list.size() - 1; i++) {
+                    sb.append("{\n\t\t");
+                    sb.append("\"serialnumber\": \"" + list.get(i).getSerialNumber() + "\",\n\t\t");
+                    sb.append("\"name\": \"" + list.get(i).getName() + "\",\n\t\t");
+                    sb.append("\"price\": \"" + list.get(i).getValue() + "\"\n\t");
+                    sb.append("},\n\t");
+                }
+                sb.append("{\n\t\t");
+                sb.append("\"serialnumber\": \"" + list.get(list.size() - 1).getSerialNumber() + "\",\n\t\t");
+                sb.append("\"name\": \"" + list.get(list.size() - 1).getName() + "\",\n\t\t");
+                sb.append("\"price\": \"" + list.get(list.size() - 1).getValue() + "\"\n\t}\n");
+                sb.append("     ]\n}");
+
+
+                pw.write(sb.toString());
+                pw.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
@@ -239,7 +275,33 @@ public class InventoryTrackerController implements Initializable {
 
     @FXML
     public void importJSON(ActionEvent event) {
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON (JavaScript Object Notation", "*.json"));
+        File input = fileChooser.showOpenDialog(new Stage());
+        itemsTableView.getItems().clear();
 
+        try {
+            //  process all items
+            JsonElement fileElement = JsonParser.parseReader(new FileReader(input));
+            JsonObject fileObject = fileElement.getAsJsonObject();
+
+            JsonArray jsonArrayOfItems = fileObject.get("items").getAsJsonArray();
+            for(JsonElement itemElement : jsonArrayOfItems) {
+                //  get the JsonObject:
+                JsonObject itemJsonObject = itemElement.getAsJsonObject();
+
+                //  extract data
+                String serialnumber = itemJsonObject.get("serialnumber").getAsString();
+                String name = itemJsonObject.get("name").getAsString();
+                Double price = itemJsonObject.get("price").getAsDouble();
+
+                list.add(new Item(serialnumber, name, price));
+            }
+            itemsTableView.setItems(list);
+        } catch(FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
