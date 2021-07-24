@@ -85,15 +85,12 @@ public class InventoryTrackerController implements Initializable {
         itemNameColumn.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
         itemValueColumn.setCellValueFactory(new PropertyValueFactory<Item, Double>("value"));
 
-        /*
+
         Item item1 = new Item("12345", "PS2", 500);
         Item item2 = new Item("X6246", "Xbox", 400);
         Item item3 = new Item("5505", "test", 5);
 
         list.addAll(item1, item2, item3);
-
-
-         */
 
         FilteredList<Item> filteredData = new FilteredList<>(list, b -> true);
             filterField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -249,13 +246,13 @@ public class InventoryTrackerController implements Initializable {
                     sb.append("{\n\t\t");
                     sb.append("\"serialnumber\": \"" + list.get(i).getSerialNumber() + "\",\n\t\t");
                     sb.append("\"name\": \"" + list.get(i).getName() + "\",\n\t\t");
-                    sb.append("\"price\": \"" + list.get(i).getValue() + "\"\n\t");
+                    sb.append("\"value\": \"" + list.get(i).getValue() + "\"\n\t");
                     sb.append("},\n\t");
                 }
                 sb.append("{\n\t\t");
                 sb.append("\"serialnumber\": \"" + list.get(list.size() - 1).getSerialNumber() + "\",\n\t\t");
                 sb.append("\"name\": \"" + list.get(list.size() - 1).getName() + "\",\n\t\t");
-                sb.append("\"price\": \"" + list.get(list.size() - 1).getValue() + "\"\n\t}\n");
+                sb.append("\"value\": \"" + list.get(list.size() - 1).getValue() + "\"\n\t}\n");
                 sb.append("     ]\n}");
 
 
@@ -292,7 +289,7 @@ public class InventoryTrackerController implements Initializable {
                 //  extract data
                 String serialnumber = itemJsonObject.get("serialnumber").getAsString();
                 String name = itemJsonObject.get("name").getAsString();
-                Double price = itemJsonObject.get("price").getAsDouble();
+                Double price = itemJsonObject.get("value").getAsDouble();
 
                 list.add(new Item(serialnumber, name, price));
             }
@@ -316,9 +313,9 @@ public class InventoryTrackerController implements Initializable {
                 PrintWriter pw = new PrintWriter(file);
                 StringBuilder sb = new StringBuilder();
 
+                sb.append("serialnumber\tname\tvalue\n");
                 //  separate the serial number, name, and price with tabs for each line
                 for(int i = 0; i < list.size(); i++) {
-
                     sb.append(list.get(i).getSerialNumber());
                     sb.append("\t");
                     sb.append(list.get(i).getName());
@@ -336,7 +333,7 @@ public class InventoryTrackerController implements Initializable {
 
     @FXML
     public void importTSV(ActionEvent event) {
-        String line = "";
+        //  String line = "";
 
         //  open up an open window and select the file
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("TSV (Tab delimited)", "*.tsv"));
@@ -345,7 +342,8 @@ public class InventoryTrackerController implements Initializable {
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
-
+            br.readLine();
+            String line = null;
             //  reads in tsv file
             while((line = br.readLine()) != null) {
                 String[] temp = line.split("\t");
