@@ -304,7 +304,7 @@ public class InventoryTrackerController implements Initializable {
     @FXML
     public void exportTSV(ActionEvent event) {
         //  open up an open window and can select the file
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("TSV (Tab delimited)", "*.tsv"));
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Documents", "*.txt"));
         File file = fileChooser.showSaveDialog(new Stage());
 
         //  if the file is not empty, write the list's data into tsv format
@@ -336,7 +336,7 @@ public class InventoryTrackerController implements Initializable {
         //  String line = "";
 
         //  open up an open window and select the file
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("TSV (Tab delimited)", "*.tsv"));
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Documents", "*.txt"));
         File file = fileChooser.showOpenDialog(new Stage());
         itemsTableView.getItems().clear();
 
