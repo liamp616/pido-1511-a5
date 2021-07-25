@@ -1,3 +1,8 @@
+/*
+ *  UCF COP3330 Summer 2021 Assignment 5 Solution
+ *  Copyright 2021 Liam Pido
+ */
+
 package ucf.assignments.exercise56;
 
 import com.google.gson.*;
@@ -13,12 +18,16 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.*;
 import java.net.URL;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class InventoryTrackerController implements Initializable {
 
@@ -224,7 +233,77 @@ public class InventoryTrackerController implements Initializable {
 
     @FXML
     public void exportHTML(ActionEvent event) {
+        //  open up an open window and can select the file
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("HyperText Markup Language file", "*.html"));
+        File file = fileChooser.showSaveDialog(new Stage());
 
+        //  if the file is not empty, write the list's data into html format
+        if(file != null) {
+            try {
+                PrintWriter pw = new PrintWriter(file);
+                StringBuilder sb = new StringBuilder();
+
+                sb.append("<table>\n");
+                sb.append("\t<caption>Inventory</caption>\n");
+                sb.append("\t<thread>\n");
+                sb.append("\t\t<tr>\n\t\t\t<th scope=\"col\">Serial Number</th>\n");
+                sb.append("\t\t\t<th scope=\"col\">Name</th>\n");
+                sb.append("\t\t\t<th scope=\"col\">Price ($)</th>\n");
+                sb.append("\t\t</tr>\n");
+                sb.append("\t</thread>\n");
+                sb.append("\t<tbody>\n");
+
+                //  separate the serial number, name, and price with tabs for each line
+                for(int i = 0; i < list.size() - 1; i++) {
+                    sb.append("\t\t<tr>\n");
+                    sb.append("\t\t\t<td>" + list.get(i).getSerialNumber() + "</td>\n");
+                    sb.append("\t\t\t<td>" + list.get(i).getName() + "</td>\n");
+                    sb.append("\t\t\t<td>" + list.get(i).getValue() + "</td>\n");
+                    sb.append("\t\t</tr>\n");
+                }
+
+                sb.append("\t\t<tr>\n");
+                sb.append("\t\t\t<td>" + list.get(list.size() - 1).getSerialNumber() + "</td>\n");
+                sb.append("\t\t\t<td>" + list.get(list.size() - 1).getName() + "</td>\n");
+                sb.append("\t\t\t<td>" + list.get(list.size() - 1).getValue() + "</td>\n");
+                sb.append("\t\t</tr>\n");
+                sb.append("\t</tbody>\n");
+                sb.append("</table>\n\n");
+
+                pw.write(sb.toString());
+                pw.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @FXML
+    public void importHTML(ActionEvent event) {
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("HyperText Markup Language file", "*.html"));
+        File input = fileChooser.showOpenDialog(new Stage());
+        itemsTableView.getItems().clear();
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(input));
+            br.readLine();
+            String line = null;
+            //  reads in html file
+            while((line = br.readLine()) != null) {
+
+
+
+
+                itemsTableView.setItems(list);
+                refresh();
+            }
+
+        } catch (FileNotFoundException fileNotFoundException) {
+            fileNotFoundException.printStackTrace();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
     }
 
     @FXML
@@ -265,10 +344,6 @@ public class InventoryTrackerController implements Initializable {
 
     }
 
-    @FXML
-    public void importHTML(ActionEvent event) {
-
-    }
 
     @FXML
     public void importJSON(ActionEvent event) {

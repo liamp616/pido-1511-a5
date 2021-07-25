@@ -1,7 +1,11 @@
+/*
+ *  UCF COP3330 Summer 2021 Assignment 5 Solution
+ *  Copyright 2021 Liam Pido
+ */
+
 package ucf.assignments.exercise56;
 
 import javafx.application.Application;
-import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -23,7 +27,7 @@ public class InventoryTracker extends Application {
             Scene scene = new Scene(root);
 
             primaryStage.setScene(scene);
-            primaryStage.setTitle("List Manager");
+            primaryStage.setTitle("Inventory Tracker");
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
