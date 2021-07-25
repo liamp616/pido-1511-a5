@@ -1,85 +1,36 @@
 @startuml
 
 class InventoryTracker {
-    start()
     main()
+    start()
 }
 
-class SceneManager {
-    scenes: Map<String, Scene>
+class InventoryTrackerController {
+    ObservableList<Item> list
 
-    load()
-    getScene(String): Scene
-}
-
-class MainWindowController {
-    items: ItemModel
-    scenes: SceneManager
-    fileManager: FileManager
-
-    + MainWindowController(ItemModel, SceneManager)
-
-    addItemButtonClicked(EventHandler)
-    editItemButtonClicked(EventHandler)
-    removeItemButtonClicked((EventHandler)
-
-    addItem(String, String, BigDecimal)
+    refresh()
+    tableViewSelectedItem()
+    addItem()
+    removeItem()
     editItem()
-}
-
-class AddItemWindowController {
-
-}
-
-class EditItemWindowController {
-
-}
-
-class RemoveItemWindowController {
-
-}
-
-class SearchItemWindowController {
-
-}
-
-class ItemModel {
-    - ObservableList<Item>
+    exportHTML()
+    importHTML()
+    exportJSON()
+    importJSON()
+    exportTSV()
+    importTSV()
 }
 
 class Item {
-    - name: SimpleStringProperty
-    - serialNumber: SimpleStringProperty
-    -value: SimpleDoubleProperty
-
-    + getName()
-    + setName()
-    + nameProperty()
-    + getSerialNumber()
+    String serialNumber
+    String name
+    double value
 }
 
-class FileManager {
-    saveAsCSV(filename: String, data: String)
-    saveAsJSON(filename: String, data: String)
-    saveAsHTML(filename: String, data: String)
-}
+javafx.Application <|-- InventoryTracker
 
-
-openjfx.org.Application <|-- InventoryTracker
-InventoryTracker -- SceneManager
-SceneManager -- MainWindowController
-SceneManager -- AddItemWindowController
-SceneManager -- EditItemWindowController
-SceneManager -- RemoveItemWindowController
-SceneManager -- SearchItemWindowController
-MainWindowController o-- ItemModel
-AddItemWindowController o-- ItemModel
-EditItemWindowController o-- ItemModel
-RemoveItemWindowController o-- ItemModel
-SearchItemWindowController o-- ItemModel
-ItemModel *-- Item
-MainWindowController o-- FileManager
-
+InventoryTracker - InventoryTrackerController
+InventoryTrackerController *--> Item
 
 
 
